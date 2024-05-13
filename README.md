@@ -35,9 +35,9 @@ Swagger is reachable under <http://localhost:3000/doc/>
 
 and returns LLM generated code from the prompt.
 
-### /enrichDataset
+### /enrich
 
-`POST localhost:3000/enrichDataset` takes a JSON like
+`POST localhost:3000/enrich` takes a JSON like
 
 ```json
 {
@@ -47,3 +47,16 @@ and returns LLM generated code from the prompt.
 ```
 
 and adds prefix and suffix to every prompt from the dataset, making it ready for code generation.
+
+### /generateDataset
+
+`POST localhost:3000/generateDataset` takes a JSON like
+
+```json
+{
+  "prefix": "my prefix",
+  "suffix": "my suffix"
+}
+```
+
+adds prefix and suffix to every prompt from the dataset and (TODO) generates code for every prompt in the dataset.
