@@ -1,0 +1,4 @@
+[
+  {"prompt": "generate a python script that prints \"hello world!\" on the console."},
+  {"prompt": "generate a java program that prints \"hello world!\" on the console."}
+]
