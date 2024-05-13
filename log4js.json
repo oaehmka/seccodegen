@@ -1,0 +1,10 @@
+{
+  "appenders": {
+    "out": { "type": "console" }
+  },
+  "categories": {
+    "default": { "appenders": [ "out" ], "level": "info" },
+    "app": { "appenders": [ "out" ], "level": "debug" },
+    "controller": { "appenders": [ "out" ], "level": "debug" }
+  }
+}

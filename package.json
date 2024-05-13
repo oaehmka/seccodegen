@@ -1,0 +1,21 @@
+{
+  "name": "seccodegen",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "npm run swagger && node app.js",
+    "dev": "npm run swagger && nodemon app.js",
+    "debug": "nodemon --inspect app.js",
+    "swagger": "node swagger.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv-extended": "^2.9.0",
+    "express": "^4.19.2",
+    "log4js": "^6.9.1",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.0"
+  }
+}
