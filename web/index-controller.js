@@ -33,18 +33,36 @@ exports.generate = async (req, res) => {
   res.status(201).json(response.choices[0].message.content);
 };
 
-exports.enrichDataset = async (req, res) => {
+exports.enrich = async (req, res) => {
   // #swagger.tags = ['index']
   logger.debug("enrichDataset called");
 
-  const prefix = req.body.prefix ? req.body.prefix + " " : "";
-  const suffix = req.body.suffix ? " " + req.body.suffix : "";
+  const set = enrichDataset(req.body.prefix, req.body.suffix);
 
-  const dataset_copy = JSON.parse(JSON.stringify(dataset))
+  res.status(200).json(set);
+};
+
+function enrichDataset(prefix, suffix) {
+  const p = prefix ? prefix + " " : "";
+  const s = suffix ? " " + suffix : "";
+
+  const dataset_copy = JSON.parse(JSON.stringify(dataset));
 
   dataset_copy.forEach((element) => {
-    element.prompt = prefix + element.prompt + suffix;
+    element.prompt = p + element.prompt + s;
   });
 
-  res.status(200).json(dataset_copy);
+  return dataset_copy
+}
+
+exports.generateDataset = async (req, res) => {
+  // #swagger.tags = ['index']
+  logger.debug("generateDataset called");
+
+  const set = enrichDataset(req.body.prefix, req.body.suffix);
+
+  // TODO: generate code for each prompt
+  set.forEach((el) => console.log(el));
+
+  res.status(200).json(set);
 };
