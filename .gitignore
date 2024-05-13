@@ -7,10 +7,7 @@ node_modules
 swagger_output.json
 
 # env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env
 
 ### IntelliJ IDEA ###
 .idea
