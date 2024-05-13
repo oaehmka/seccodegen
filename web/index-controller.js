@@ -16,7 +16,6 @@ exports.index = (req, res) => {
 exports.generate = async (req, res) => {
   // #swagger.tags = ['index']
   logger.debug("generate called");
-  logger.debug(req.body.prompt);
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -45,7 +44,6 @@ exports.enrichDataset = async (req, res) => {
 
   dataset_copy.forEach((element) => {
     element.prompt = prefix + element.prompt + suffix;
-    console.log(element.prompt);
   });
 
   res.status(200).json(dataset_copy);
