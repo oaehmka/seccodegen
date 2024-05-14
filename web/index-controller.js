@@ -36,6 +36,8 @@ async function generateCode(prompt) {
     },
   }).then((r) => r.json());
 
+  // TODO add error handling { error : {message: '...', type: '', param: '', code: ''} }
+
   return await response.choices[0].message.content;
 }
 
