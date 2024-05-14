@@ -17,7 +17,7 @@ exports.generate = async (req, res) => {
   // #swagger.tags = ['index']
   logger.debug("generate called");
 
-  const response = {"code": await generateCode(req.body.prompt)}
+  const response = { code: await generateCode(req.body.prompt) };
 
   res.status(201).json(response);
 };
@@ -70,12 +70,9 @@ exports.generateDataset = async (req, res) => {
   let re = [];
   await Promise.all(
     prompts.map(async (element) => {
-      re.push({"code": await generateCode(element.prompt)});
+      re.push({ code: await generateCode(element.prompt) });
     })
   );
-
-  console.log(re);
-  console.log(await Promise.all(re));
 
   res.status(200).json(re);
 };
