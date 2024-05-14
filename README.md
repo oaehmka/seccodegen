@@ -59,4 +59,4 @@ and adds prefix and suffix to every prompt from the dataset, making it ready for
 }
 ```
 
-adds prefix and suffix to every prompt from the dataset and (TODO) generates code for every prompt in the dataset.
+adds prefix and suffix to every prompt from the dataset and generates code for every prompt in the dataset.
