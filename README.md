@@ -1,6 +1,6 @@
 # Secure Code Generator
 
-This framwork enables you to test the impact of prompts on the security of generated code.
+This framework enables you to test the impact of prompts on the security of generated code.
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@ create a file called `.env` with the following content:
 OPENAI_API_KEY="<your-openai-api-key>"
 ```
 
-install dependencies: `npm install`  
+install dependencies: `npm install`
 
 ## Running the code
 

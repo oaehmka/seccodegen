@@ -72,7 +72,10 @@ exports.generateDataset = async (req, res) => {
   let re = [];
   await Promise.all(
     prompts.map(async (element) => {
-      re.push({ code: await generateCode(element.prompt) });
+      re.push({
+        prompt: element.prompt,
+        code: await generateCode(element.prompt),
+      });
     })
   );
 
