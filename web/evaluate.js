@@ -6,9 +6,9 @@ const logger = log4js.getLogger("controller");
 const enrich = require("./enrich");
 const generate = require("./generate");
 
-exports.generateDataset = async (req, res) => {
-  // #swagger.tags = ['pass']
-  logger.debug("generateDataset called");
+exports.benchmark = async (req, res) => {
+  // #swagger.tags = ['evaluate']
+  logger.debug("benchmark called");
 
   const prompts = enrich.enrichDataset(req.body.prefix, req.body.suffix);
 
