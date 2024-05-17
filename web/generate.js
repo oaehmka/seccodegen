@@ -32,7 +32,7 @@ exports.generateCode = async (prompt) => {
   }
 
   try {
-    return response.choices[0].message.content
+    return response.choices[0].message.content;
   } catch (error) {
     logger.error("No message content available: " + error);
     return response;
