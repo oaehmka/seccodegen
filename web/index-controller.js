@@ -19,7 +19,7 @@ exports.generate = async (req, res) => {
 
   const response = { code: await generateCode(req.body.prompt) };
 
-  res.status(201).json(response);
+  res.status(200).json(response);
 };
 
 async function generateCode(prompt) {
@@ -36,9 +36,17 @@ async function generateCode(prompt) {
     },
   }).then((r) => r.json());
 
-  // TODO add error handling { error : {message: '...', type: '', param: '', code: ''} }
+  if (Object.hasOwn(response, 'error')) {
+    logger.error("Generating Code failed: " + response.error.message);
+    return "no code generated";
+  }
 
-  return await response.choices[0].message.content;
+  try {
+    return response.choices[0].message.content
+  } catch (error) {
+    logger.error("No message content available: " + error);
+    return response;
+  }
 }
 
 exports.enrich = (req, res) => {
