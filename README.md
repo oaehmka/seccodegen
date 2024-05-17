@@ -60,3 +60,16 @@ and adds prefix and suffix to every prompt from the dataset, making it ready for
 ```
 
 adds prefix and suffix to every prompt from the dataset and generates code for every prompt in the dataset.
+
+### /writeFile
+
+`POST localhost:3000/writeFile` takes a JSON like
+
+```json
+{
+  "filename": "test.txt",
+  "content": "lorem ipsum and so on"
+}
+```
+
+and writes the `content` to `filename`.
