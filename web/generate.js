@@ -26,7 +26,7 @@ exports.generateCode = async (prompt) => {
     },
   }).then((r) => r.json());
 
-  if (Object.hasOwn(response, 'error')) {
+  if (Object.hasOwn(response, "error")) {
     logger.error("Generating Code failed: " + response.error.message);
     return "no code generated";
   }
@@ -37,4 +37,4 @@ exports.generateCode = async (prompt) => {
     logger.error("No message content available: " + error);
     return response;
   }
-}
+};

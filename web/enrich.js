@@ -25,4 +25,4 @@ exports.enrichDataset = (prefix, suffix) => {
   });
 
   return dataset_copy;
-}
+};
