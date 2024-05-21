@@ -42,7 +42,7 @@ exports.read = (req, res) => {
         res.status(501).json({ error: "reading failed", message: error })
       } else {
         logger.info("read file: " + req.body.filename);
-        res.status(200).json(data);
+        res.status(200).type('json').send(data);
       }
     });
 };
