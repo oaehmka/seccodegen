@@ -18,10 +18,10 @@ exports.enrichDataset = (prefix, suffix) => {
   const p = prefix ? prefix + " " : "";
   const s = suffix ? " " + suffix : "";
 
-  const dataset_copy = JSON.parse(JSON.stringify(dataset));
+  const dataset_copy = dataset;
 
   dataset_copy.forEach((element) => {
-    element.prompt = p + element.prompt + s;
+    element.modified_prompt = p + element.prompt + s;
   });
 
   return dataset_copy;

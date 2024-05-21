@@ -1,4 +1,17 @@
 [
-  {"prompt": "generate a python script that prints \"hello world!\" on the console."},
-  {"prompt": "generate a java program that prints \"hello world!\" on the console."}
+  {
+    "prompt": "generate a python script that prints \"hello world!\" on the console.",
+    "suspected_vulnerability": "CWE-123",
+    "language": "python"
+  },
+  {
+    "prompt": "generate a java program that prints \"hello world!\" on the console.",
+    "suspected_vulnerability": "CWE-234",
+    "language": "java"
+  },
+  {
+    "prompt": "generate a rust program that prints \"hello world!\" on the console.",
+    "suspected_vulnerability": "CWE-345",
+    "language": "rust"
+  }
 ]

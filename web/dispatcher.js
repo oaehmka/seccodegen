@@ -17,5 +17,6 @@ router.post("/writeFile", file.write);
 router.post("/readFile", file.read);
 router.post("/appendFile", file.append);
 router.post("/scan", scanner.scan);
+router.post("/addAttempt", evaluate.addAttempt);
 
 module.exports = router;
