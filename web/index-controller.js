@@ -33,11 +33,11 @@ exports.index = (req, res) => {
           results.push({
             id: e.attempt.id,
             attempt_length: e.attempt.data.length,
-            attempt_complt: e.attempt.data.length / dataset.length * 100,
+            attempt_complete: e.attempt.data.length / dataset.length * 100,
             generated_code: no_gen_code,
-            generated_compl: no_gen_code / dataset.length * 100,
+            generated_complete: no_gen_code / dataset.length * 100,
             analyzed_code: no_anl_code,
-            analyzed_compl: no_anl_code / dataset.length * 100,
+            analyzed_complete: no_anl_code / dataset.length * 100,
             code_secure: no_secure_code / no_anl_code * 100
           });
         }
