@@ -7,6 +7,7 @@ const path = require("node:path");
 
 const enrich = require("./enrich");
 const generate = require("./generate");
+const scanner = require("./scanner");
 
 exports.addAttempt = (req, res) => {
   // #swagger.tags = ['evaluate']
@@ -86,6 +87,53 @@ exports.generateMissingCode = (req, res) => {
               .then((el) => {
                 datapoint.generated_code = el;
               });
+          }
+        }
+      }
+
+      fs.writeFile(dataPath, JSON.stringify(data, null, 2), (error) => {
+        if (error) {
+          logger.error("writing file failed: " + error);
+          res.status(501).json({ error: "writing failed", message: error });
+        } else {
+          logger.info("write to file: " + dataPath);
+          res.status(201).send();
+        }
+      });
+    }
+  });
+};
+
+exports.analyzeMissingCode = (req, res) => {
+  // #swagger.tags = ['evaluate']
+  logger.debug("analyzeMissingCode called");
+
+  const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
+
+  fs.readFile(dataPath, "utf8", async (error, data) => {
+    if (error) {
+      logger.error("reading file failed: " + error);
+      res.status(501).json({ error: "reading data failed", message: error });
+    } else {
+      logger.info("read file: " + dataPath);
+
+      data = JSON.parse(data);
+
+      for (const e of data) {
+        for (const datapoint of e.attempt.data) {
+          if (
+            datapoint.scanner_report === "" &&
+            datapoint.generated_code !== ""
+          ) {
+            logger.info("scanning code");
+
+            const scan_result = scanner.scanCode({
+              code: datapoint.generated_code,
+              sus_cwe: datapoint.suspected_vulnerability,
+              language: datapoint.language,
+            });
+            datapoint.scanner_report = scan_result.report;
+            datapoint.vulnerable = scan_result.vulnerable;
           }
         }
       }

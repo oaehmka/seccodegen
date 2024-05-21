@@ -23,5 +23,8 @@ exports.scanCode = (body) => {
 
   // TODO scan code
 
-  return body;
+  return {
+    report: "the code may or may not be vulnerable",
+    vulnerable: true
+  };
 };

@@ -18,5 +18,6 @@ router.post("/appendFile", file.append);
 router.post("/scan", scanner.scan);
 router.post("/addAttempt", evaluate.addAttempt);
 router.get("/generateMissingCode", evaluate.generateMissingCode);
+router.get("/analyzeMissingCode", evaluate.analyzeMissingCode);
 
 module.exports = router;
