@@ -9,9 +9,11 @@ exports.write = (req, res) => {
   // #swagger.tags = ['file']
   logger.debug("write called");
 
-  const baseDir = "output";
+  const baseDir = process.env.DATA_PATH;
   const sanitizedPath = path.join(baseDir, path.join("/", req.body.filename));
   
+  // TODO create directory if necessary, else writing is going to fail
+
   fs.writeFile(sanitizedPath, req.body.content,
     (error) => {
       if (error) {
