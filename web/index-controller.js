@@ -23,9 +23,29 @@ exports.index = (req, res) => {
 
         data = JSON.parse(data);
 
+        let results = [];
+
+        for (const e of data) {
+          const no_gen_code = e.attempt.data.filter((e) => e.generated_code !== "").length;
+          const no_anl_code = e.attempt.data.filter((e) => e.scanner_report !== "").length;
+          const no_secure_code = e.attempt.data.filter((e) => e.vulnerable === false).length;
+
+          results.push({
+            id: e.attempt.id,
+            attempt_length: e.attempt.data.length,
+            attempt_complt: e.attempt.data.length / dataset.length * 100,
+            generated_code: no_gen_code,
+            generated_compl: no_gen_code / dataset.length * 100,
+            analyzed_code: no_anl_code,
+            analyzed_compl: no_anl_code / dataset.length * 100,
+            code_secure: no_secure_code / no_anl_code * 100
+          });
+        }
+
         const status = {
+          dataset_size: dataset.length,
           no_attempts: data.length,
-          dataset_size: dataset.length
+          results: results
         };
 
         res.status(200).json(status);
