@@ -63,6 +63,7 @@ exports.append = (req, res) => {
       logger.info("read file: " + req.body.filename);
 
       data = JSON.parse(data);
+      req.body.content.attempt = {"id": data.length, ...req.body.content.attempt};
       data.push(req.body.content);
       
       fs.writeFile(sanitizedPath, JSON.stringify(data),
