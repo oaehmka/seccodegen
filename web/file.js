@@ -66,7 +66,7 @@ exports.append = (req, res) => {
       req.body.content.attempt = {"id": data.length, ...req.body.content.attempt};
       data.push(req.body.content);
       
-      fs.writeFile(sanitizedPath, JSON.stringify(data),
+      fs.writeFile(sanitizedPath, JSON.stringify(data, null, 2),
         (error) => {
           if (error) {
             logger.error("writing file failed: " + error);
