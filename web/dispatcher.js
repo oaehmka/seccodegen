@@ -14,6 +14,7 @@ router.post("/generate", generate.generate);
 router.post("/enrich", enrich.enrich);
 router.post("/benchmark", evaluate.benchmark);
 router.post("/writeFile", file.write);
+router.post("/readFile", file.read);
 router.post("/scan", scanner.scan);
 
 module.exports = router;

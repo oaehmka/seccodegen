@@ -27,3 +27,22 @@ exports.write = (req, res) => {
       }
     });
 };
+
+exports.read = (req, res) => {
+  // #swagger.tags = ['file']
+  logger.debug("read called");
+
+  const baseDir = process.env.DATA_PATH;
+  const sanitizedPath = path.join(baseDir, path.join("/", req.body.filename));
+  
+  fs.readFile(sanitizedPath, 'utf8',
+    (error, data) => {
+      if (error) {
+        logger.error("reading file failed: " + error);
+        res.status(501).json({ error: "reading failed", message: error })
+      } else {
+        logger.info("read file: " + req.body.filename);
+        res.status(200).json(data);
+      }
+    });
+};
