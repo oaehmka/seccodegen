@@ -8,26 +8,7 @@ const path = require('node:path');
 const enrich = require("./enrich");
 const generate = require("./generate");
 
-exports.benchmark = async (req, res) => {
-  // #swagger.tags = ['evaluate']
-  logger.debug("benchmark called");
-
-  const prompts = enrich.enrichDataset(req.body.prefix, req.body.suffix);
-
-  let re = [];
-  await Promise.all(
-    prompts.map(async (element) => {
-      re.push({
-        prompt: element.prompt,
-        code: await generate.generateCode(element.prompt),
-      });
-    })
-  );
-
-  res.status(200).json(re);
-};
-
-exports.addAttempt = async (req, res) => {
+exports.addAttempt = (req, res) => {
   // #swagger.tags = ['evaluate']
   logger.debug("addAttempt called");
 
@@ -83,3 +64,46 @@ exports.addAttempt = async (req, res) => {
     });
 
 };
+
+exports.generateMissingCode = (req, res) => {
+    // #swagger.tags = ['evaluate']
+    logger.debug("generateMissingCode called");
+
+    const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
+  
+    fs.readFile(dataPath, 'utf8',
+      async (error, data) => {
+        if (error) {
+          logger.error("reading file failed: " + error);
+          res.status(501).json({ error: "reading data failed", message: error });
+        } else {
+          logger.info("read file: " + dataPath);
+  
+          data = JSON.parse(data);
+  
+          for (const e of data) {
+            for (const datapoint of e.attempt.data) {
+              if (datapoint.generated_code === "") {
+                logger.info("generating code");
+
+                await generate.generateCode(datapoint.modified_prompt).then((el) => {
+                  datapoint.generated_code = el;
+                });
+              }
+            }
+          }
+  
+          fs.writeFile(dataPath, JSON.stringify(data, null, 2),
+          (error) => {
+            if (error) {
+              logger.error("writing file failed: " + error);
+              res.status(501).json({ error: "writing failed", message: error })
+            } else {
+              logger.info("write to file: " + dataPath);
+              res.status(201).send();
+            }
+          });
+  
+        }
+      });
+}

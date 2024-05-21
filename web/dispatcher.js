@@ -12,11 +12,11 @@ const scanner = require("./scanner");
 router.get("/", index_controller.index);
 router.post("/generate", generate.generate);
 router.post("/enrich", enrich.enrich);
-router.post("/benchmark", evaluate.benchmark);
 router.post("/writeFile", file.write);
 router.post("/readFile", file.read);
 router.post("/appendFile", file.append);
 router.post("/scan", scanner.scan);
 router.post("/addAttempt", evaluate.addAttempt);
+router.get("/generateMissingCode", evaluate.generateMissingCode);
 
 module.exports = router;
