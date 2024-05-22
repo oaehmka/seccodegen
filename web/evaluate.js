@@ -138,7 +138,9 @@ exports.analyzeMissingCode = (req, res) => {
             d.vulnerable = scan_result.vulnerable;
           }
         }
-        a.attempt.secure = number_of_secure_results / a.attempt.data.length * 100;
+        if (a.attempt.secure === -1) {
+          a.attempt.secure = number_of_secure_results / a.attempt.data.length * 100;
+        }
       }
 
       fs.writeFile(dataPath, JSON.stringify(attempts, null, 2), (error) => {
