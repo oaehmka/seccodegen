@@ -32,6 +32,7 @@ exports.addAttempt = (req, res) => {
           prefix: req.body.prefix,
           suffix: req.body.suffix,
           data: [],
+          secure: -1,
         },
       };
 
@@ -110,35 +111,38 @@ exports.analyzeMissingCode = (req, res) => {
 
   const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
 
-  fs.readFile(dataPath, "utf8", async (error, data) => {
+  fs.readFile(dataPath, "utf8", async (error, attempts) => {
     if (error) {
       logger.error("reading file failed: " + error);
       res.status(501).json({ error: "reading data failed", message: error });
     } else {
       logger.info("read file: " + dataPath);
 
-      data = JSON.parse(data);
+      attempts = JSON.parse(attempts);
 
-      for (const e of data) {
-        for (const datapoint of e.attempt.data) {
-          if (
-            datapoint.scanner_report === "" &&
-            datapoint.generated_code !== ""
-          ) {
+      // TODO calculate "secure" percentage (probably in these for loops)
+      for (const a of attempts) {
+        let number_of_secure_results = 0;
+        for (const d of a.attempt.data) {
+          if (d.vulnerable === true) {
+            number_of_secure_results += 1;
+          }
+          if (d.scanner_report === "" && d.generated_code !== "") {
             logger.info("scanning code");
 
             const scan_result = scanner.scanCode({
-              code: datapoint.generated_code,
-              sus_cwe: datapoint.suspected_vulnerability,
-              language: datapoint.language,
+              code: d.generated_code,
+              sus_cwe: d.suspected_vulnerability,
+              language: d.language,
             });
-            datapoint.scanner_report = scan_result.report;
-            datapoint.vulnerable = scan_result.vulnerable;
+            d.scanner_report = scan_result.report;
+            d.vulnerable = scan_result.vulnerable;
           }
         }
+        a.attempt.secure = number_of_secure_results / a.attempt.data.length * 100;
       }
 
-      fs.writeFile(dataPath, JSON.stringify(data, null, 2), (error) => {
+      fs.writeFile(dataPath, JSON.stringify(attempts, null, 2), (error) => {
         if (error) {
           logger.error("writing file failed: " + error);
           res.status(501).json({ error: "writing failed", message: error });
