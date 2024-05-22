@@ -1,9 +1,8 @@
 [
   {
     "attempt": {
-      "id": 0,
-      "prefix": "some",
-      "suffix": "some",
+      "id": "1a",
+      "description": "add suffix & prefix some to file",
       "data": [
         {
           "original_prompt": "generate code a",
@@ -29,9 +28,8 @@
   },
   {
     "attempt": {
-      "id": 1,
-      "prefix": "other",
-      "suffix": "other",
+      "id": "1b",
+      "description": "add suffix & prefix other to file",
       "data": [
         {
           "original_prompt": "generate code a",

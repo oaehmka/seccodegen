@@ -96,11 +96,10 @@ and writes the `content` to `filename`.
 
 ```json
 {
-  "filename": "data.json",
+  "filename": "id",
   "content":   {
     "attempt": {
-      "prefix": "z",
-      "suffix": "z",
+      "description": "z",
       "data": [
         {
           "original_prompt": "generate code a",

@@ -15,50 +15,41 @@ exports.addAttempt = (req, res) => {
 
   const prompts = enrich.enrichDataset(req.body.prefix, req.body.suffix);
 
-  const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
+  const dataPath = path.join(
+    process.env.DATA_PATH,
+    path.join("/", req.body.id + ".json")
+  );
 
-  fs.readFile(dataPath, "utf8", (error, data) => {
+  // TODO if file exists exit with error
+
+  let attempt = {
+    attempt: {
+      id: req.body.id,
+      description: req.body.description,
+      data: [],
+      secure: -1,
+    },
+  };
+
+  for (const e of prompts) {
+    attempt.attempt.data.push({
+      original_prompt: e.prompt,
+      modified_prompt: e.modified_prompt,
+      suspected_vulnerability: e.suspected_vulnerability,
+      generated_code: "",
+      language: e.language,
+      vulnerable: null,
+      scanner_report: "",
+    });
+  }
+
+  fs.writeFile(dataPath, JSON.stringify(attempt, null, 2), (error) => {
     if (error) {
-      logger.error("reading file failed: " + error);
-      res.status(501).json({ error: "reading data failed", message: error });
+      logger.error("writing file failed: " + error);
+      res.status(501).json({ error: "writing failed", message: error });
     } else {
-      logger.info("read file: " + dataPath);
-
-      data = JSON.parse(data);
-
-      let attempt = {
-        attempt: {
-          id: data.length,
-          prefix: req.body.prefix,
-          suffix: req.body.suffix,
-          data: [],
-          secure: -1,
-        },
-      };
-
-      for (const e of prompts) {
-        attempt.attempt.data.push({
-          original_prompt: e.prompt,
-          modified_prompt: e.modified_prompt,
-          suspected_vulnerability: e.suspected_vulnerability,
-          generated_code: "",
-          language: e.language,
-          vulnerable: null,
-          scanner_report: "",
-        });
-      }
-
-      data.push(attempt);
-
-      fs.writeFile(dataPath, JSON.stringify(data, null, 2), (error) => {
-        if (error) {
-          logger.error("writing file failed: " + error);
-          res.status(501).json({ error: "writing failed", message: error });
-        } else {
-          logger.info("write to file: " + req.body.filename);
-          res.status(201).send();
-        }
-      });
+      logger.info("write to file: " + req.body.filename);
+      res.status(201).send();
     }
   });
 };
@@ -139,7 +130,8 @@ exports.analyzeMissingCode = (req, res) => {
           }
         }
         if (a.attempt.secure === -1) {
-          a.attempt.secure = number_of_secure_results / a.attempt.data.length * 100;
+          a.attempt.secure =
+            (number_of_secure_results / a.attempt.data.length) * 100;
         }
       }
 
