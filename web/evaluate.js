@@ -120,7 +120,6 @@ exports.analyzeMissingCode = (req, res) => {
 
       attempts = JSON.parse(attempts);
 
-      // TODO calculate "secure" percentage (probably in these for loops)
       for (const a of attempts) {
         let number_of_secure_results = 0;
         for (const d of a.attempt.data) {
