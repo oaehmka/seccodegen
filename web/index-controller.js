@@ -11,6 +11,7 @@ exports.index = (req, res) => {
   // #swagger.tags = ['index']
   logger.debug("index called");
 
+  // TODO instead of just processing "DATA_FILE" process every json in the "DATA_PATH"" folder
   const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
 
   fs.readFile(dataPath, "utf8", (error, data) => {

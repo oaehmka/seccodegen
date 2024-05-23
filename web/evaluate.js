@@ -58,6 +58,7 @@ exports.generateMissingCode = (req, res) => {
   // #swagger.tags = ['evaluate']
   logger.debug("generateMissingCode called");
 
+  // TODO instead of just processing "DATA_FILE" process every json in the "DATA_PATH"" folder
   const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
 
   fs.readFile(dataPath, "utf8", async (error, data) => {
@@ -100,6 +101,7 @@ exports.analyzeMissingCode = (req, res) => {
   // #swagger.tags = ['evaluate']
   logger.debug("analyzeMissingCode called");
 
+  // TODO instead of just processing "DATA_FILE" process every json in the "DATA_PATH"" folder
   const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
 
   fs.readFile(dataPath, "utf8", async (error, attempts) => {
