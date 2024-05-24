@@ -20,8 +20,6 @@ exports.addAttempt = (req, res) => {
     path.join("/", req.body.id + ".json")
   );
 
-  // TODO if file exists exit with error
-
   let attempt = {
     attempt: {
       id: req.body.id,
@@ -43,12 +41,13 @@ exports.addAttempt = (req, res) => {
     });
   }
 
-  fs.writeFile(dataPath, JSON.stringify(attempt, null, 2), (error) => {
+  const no_overwrite = { flag: "wx" };
+  fs.writeFile(dataPath, JSON.stringify(attempt, null, 2), no_overwrite, (error) => {
     if (error) {
       logger.error("writing file failed: " + error);
       res.status(501).json({ error: "writing failed", message: error });
     } else {
-      logger.info("write to file: " + req.body.filename);
+      logger.info("write to file: " + req.body.id + ".json");
       res.status(201).send();
     }
   });
