@@ -25,8 +25,7 @@ Swagger is reachable under <http://localhost:3000/doc/>
 
 ### / (index)
 
-<!-- TODO change this together with the endpoint itself -->
-`GET localhost:3000/` returns status of `data.json`.
+`GET localhost:3000/` returns status all attempts in the `data` folder.
 
 ### /generate
 

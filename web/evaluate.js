@@ -44,7 +44,7 @@ exports.addAttempt = (req, res) => {
   fs.mkdirSync(process.env.DATA_PATH, {recursive: true});
 
   const no_overwrite = { flag: "wx" };
-  fs.writeFile(dataPath, JSON.stringify(attempt, null, 2), no_overwrite, (error) => {
+  fs.writeFile(dataPath, JSON.stringify([attempt], null, 2), no_overwrite, (error) => {
     if (error) {
       logger.error("writing file failed: " + error);
       res.status(501).json({ error: "writing failed", message: error });
