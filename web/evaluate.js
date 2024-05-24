@@ -41,7 +41,7 @@ exports.addAttempt = (req, res) => {
     });
   }
 
-  fs.mkdirSync(process.env.DATA_PATH, {recursive: true});
+  fs.mkdirSync(process.env.DATA_PATH, { recursive: true });
 
   const no_overwrite = { flag: "wx" };
   fs.writeFile(dataPath, JSON.stringify([attempt], null, 2), no_overwrite, (error) => {
@@ -59,43 +59,31 @@ exports.generateMissingCode = (req, res) => {
   // #swagger.tags = ['evaluate']
   logger.debug("generateMissingCode called");
 
-  // TODO instead of just processing "DATA_FILE" process every json in the "DATA_PATH"" folder
-  const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
+  const ls = fs.readdirSync(process.env.DATA_PATH);
 
-  fs.readFile(dataPath, "utf8", async (error, data) => {
-    if (error) {
-      logger.error("reading file failed: " + error);
-      res.status(501).json({ error: "reading data failed", message: error });
-    } else {
-      logger.info("read file: " + dataPath);
-
-      data = JSON.parse(data);
-
-      for (const e of data) {
-        for (const datapoint of e.attempt.data) {
-          if (datapoint.generated_code === "") {
+  ls.forEach(async (file) => {
+    const content = fs.readFileSync(path.join(process.env.DATA_PATH, file), "utf8");
+    const attempts = JSON.parse(content);
+    
+    if (Array.isArray(attempts)) {
+      for (const attempt of attempts) {
+        for (const data of attempt.attempt.data) {
+          if (data.generated_code === "") {
             logger.info("generating code");
-
             await generate
-              .generateCode(datapoint.modified_prompt)
+              .generateCode(data.modified_prompt)
               .then((el) => {
-                datapoint.generated_code = el;
+                data.generated_code = el;
               });
           }
         }
       }
-
-      fs.writeFile(dataPath, JSON.stringify(data, null, 2), (error) => {
-        if (error) {
-          logger.error("writing file failed: " + error);
-          res.status(501).json({ error: "writing failed", message: error });
-        } else {
-          logger.info("write to file: " + dataPath);
-          res.status(201).send();
-        }
-      });
+      
+      fs.writeFileSync(path.join(process.env.DATA_PATH, file), JSON.stringify(attempts, null, 2));
     }
   });
+
+  res.status(201).send();
 };
 
 exports.analyzeMissingCode = (req, res) => {

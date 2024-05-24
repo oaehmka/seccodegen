@@ -28,7 +28,7 @@ exports.generateCode = async (prompt) => {
 
   if (Object.hasOwn(response, "error")) {
     logger.error("Generating Code failed: " + response.error.message);
-    return "no code generated";
+    return "";
   }
 
   try {
