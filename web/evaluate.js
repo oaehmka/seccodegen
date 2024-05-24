@@ -7,7 +7,7 @@ const path = require("node:path");
 
 const enrich = require("./enrich");
 const generate = require("./generate");
-const scanner = require("./scanner");
+const scan = require("./scan");
 
 exports.addAttempt = (req, res) => {
   // #swagger.tags = ['evaluate']
@@ -104,7 +104,7 @@ exports.analyzeMissingCode = (req, res) => {
           if (data.scanner_report === "" && data.generated_code !== "") {
             logger.info("scanning code");
 
-            const scan_result = scanner.scanCode({
+            const scan_result = scan.scanCode({
               code: data.generated_code,
               sus_cwe: data.suspected_vulnerability,
               language: data.language,

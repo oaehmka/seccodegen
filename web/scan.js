@@ -4,7 +4,7 @@ const log4js = require("log4js");
 const logger = log4js.getLogger("controller");
 
 exports.scan = (req, res) => {
-  // #swagger.tags = ['scanner']
+  // #swagger.tags = ['scan']
   logger.debug("generate called");
 
   const response = this.scanCode(req.body);
