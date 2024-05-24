@@ -41,14 +41,7 @@ exports.addAttempt = (req, res) => {
     });
   }
 
-  fs.mkdir(process.env.DATA_PATH, (error) => {
-    if (error) {
-      logger.error("creating folder " + process.env.DATA_PATH + " failed: " + error);
-      res.status(501).json({ error: "creating folder failed", message: error });
-    } else {
-      logger.info("created directory: " + process.env.DATA_PATH);
-    }
-  });
+  fs.mkdirSync(process.env.DATA_PATH);
 
   const no_overwrite = { flag: "wx" };
   fs.writeFile(dataPath, JSON.stringify(attempt, null, 2), no_overwrite, (error) => {

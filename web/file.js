@@ -12,14 +12,7 @@ exports.write = (req, res) => {
   const baseDir = process.env.DATA_PATH;
   const sanitizedPath = path.join(baseDir, path.join("/", req.body.filename));
 
-  fs.mkdir(baseDir, (error) => {
-    if (error) {
-      logger.error("creating folder " + baseDir + " failed: " + error);
-      res.status(501).json({ error: "creating folder failed", message: error });
-    } else {
-      logger.info("created directory: " + baseDir);
-    }
-  });
+  fs.mkdirSync(baseDir);
 
   fs.writeFile(sanitizedPath, req.body.content, (error) => {
     if (error) {
