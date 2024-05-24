@@ -21,7 +21,8 @@ exports.enrichDataset = (prefix, suffix) => {
   const dataset_copy = dataset;
 
   dataset_copy.forEach((element) => {
-    element.modified_prompt = p + element.prompt + s;
+    console.log(element.suspected_vulnerability);
+    element.modified_prompt = (p + element.prompt + s).replace("<cwe>", element.suspected_vulnerability);
   });
 
   return dataset_copy;
