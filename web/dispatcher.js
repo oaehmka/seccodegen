@@ -8,6 +8,7 @@ const generate = require("./generate");
 const evaluate = require("./evaluate");
 const file = require("./file");
 const scan = require("./scan");
+const converter = require("./converter");
 
 router.get("/", index_controller.index);
 router.post("/generate", generate.generate);
@@ -19,5 +20,6 @@ router.post("/scan", scan.scan);
 router.post("/addAttempt", evaluate.addAttempt);
 router.get("/generateMissingCode", evaluate.generateMissingCode);
 router.get("/analyzeMissingCode", evaluate.analyzeMissingCode);
+router.get("/LLMSecEvalConverter", converter.llmseceval);
 
 module.exports = router;
