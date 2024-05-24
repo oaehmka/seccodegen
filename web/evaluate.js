@@ -64,7 +64,7 @@ exports.generateMissingCode = (req, res) => {
   ls.forEach(async (file) => {
     const content = fs.readFileSync(path.join(process.env.DATA_PATH, file), "utf8");
     const attempts = JSON.parse(content);
-    
+
     if (Array.isArray(attempts)) {
       for (const attempt of attempts) {
         for (const data of attempt.attempt.data) {
@@ -78,7 +78,7 @@ exports.generateMissingCode = (req, res) => {
           }
         }
       }
-      
+
       fs.writeFileSync(path.join(process.env.DATA_PATH, file), JSON.stringify(attempts, null, 2));
     }
   });
@@ -90,51 +90,40 @@ exports.analyzeMissingCode = (req, res) => {
   // #swagger.tags = ['evaluate']
   logger.debug("analyzeMissingCode called");
 
-  // TODO instead of just processing "DATA_FILE" process every json in the "DATA_PATH"" folder
-  const dataPath = path.join(process.env.DATA_PATH, process.env.DATA_FILE);
+  const ls = fs.readdirSync(process.env.DATA_PATH);
 
-  fs.readFile(dataPath, "utf8", async (error, attempts) => {
-    if (error) {
-      logger.error("reading file failed: " + error);
-      res.status(501).json({ error: "reading data failed", message: error });
-    } else {
-      logger.info("read file: " + dataPath);
+  ls.forEach(async (file) => {
+    const content = fs.readFileSync(path.join(process.env.DATA_PATH, file), "utf8");
+    const attempts = JSON.parse(content);
 
-      attempts = JSON.parse(attempts);
+    let number_of_secure_results = 0;
 
-      for (const a of attempts) {
-        let number_of_secure_results = 0;
-        for (const d of a.attempt.data) {
-          if (d.vulnerable === true) {
-            number_of_secure_results += 1;
-          }
-          if (d.scanner_report === "" && d.generated_code !== "") {
+    if (Array.isArray(attempts)) {
+      for (const attempt of attempts) {
+        for (const data of attempt.attempt.data) {
+          if (data.scanner_report === "" && data.generated_code !== "") {
             logger.info("scanning code");
 
             const scan_result = scanner.scanCode({
-              code: d.generated_code,
-              sus_cwe: d.suspected_vulnerability,
-              language: d.language,
+              code: data.generated_code,
+              sus_cwe: data.suspected_vulnerability,
+              language: data.language,
             });
-            d.scanner_report = scan_result.report;
-            d.vulnerable = scan_result.vulnerable;
+
+            data.scanner_report = scan_result.report;
+            data.vulnerable = scan_result.vulnerable;
+          }
+          if (data.vulnerable === true) {
+            number_of_secure_results += 1;
           }
         }
-        if (a.attempt.secure === -1) {
-          a.attempt.secure =
-            (number_of_secure_results / a.attempt.data.length) * 100;
+        if (attempt.attempt.secure === -1) {
+          attempt.attempt.secure =
+            (number_of_secure_results / attempt.attempt.data.length) * 100;
         }
       }
-
-      fs.writeFile(dataPath, JSON.stringify(attempts, null, 2), (error) => {
-        if (error) {
-          logger.error("writing file failed: " + error);
-          res.status(501).json({ error: "writing failed", message: error });
-        } else {
-          logger.info("write to file: " + dataPath);
-          res.status(201).send();
-        }
-      });
+      fs.writeFileSync(path.join(process.env.DATA_PATH, file), JSON.stringify(attempts, null, 2));
     }
   });
+  res.status(201).send();
 };
