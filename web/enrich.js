@@ -22,7 +22,9 @@ exports.enrichDataset = (prefix, suffix) => {
 
   dataset_copy.forEach((element) => {
     console.log(element.suspected_vulnerability);
-    element.modified_prompt = (p + element.prompt + s).replace("<cwe>", element.suspected_vulnerability);
+    element.modified_prompt = (p + element.prompt + s)
+      .replace("<cwe>", element.suspected_vulnerability)
+      .replace("<language>", element.language);
   });
 
   return dataset_copy;
