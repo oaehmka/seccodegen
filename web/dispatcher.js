@@ -21,5 +21,6 @@ router.post("/addAttempt", evaluate.addAttempt);
 router.get("/generateMissingCode", evaluate.generateMissingCode);
 router.get("/analyzeMissingCode", evaluate.analyzeMissingCode);
 router.get("/LLMSecEvalConverter", converter.llmseceval);
+router.get("/SecurityEvalConverter", converter.securityeval);
 
 module.exports = router;
