@@ -5,20 +5,22 @@ const logger = log4js.getLogger("controller");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const dataset = require("../dataset.json");
-
 exports.index = (req, res) => {
   // #swagger.tags = ['index']
   logger.debug("index called");
+
+  const dataset = JSON.parse(fs.readFileSync(process.env.DATASET, "utf8"));
 
   const ls = fs.readdirSync(process.env.DATA_PATH);
 
   let results = [];
   let no_attempts = 0;
 
-
   ls.forEach((file) => {
-    const content = fs.readFileSync(path.join(process.env.DATA_PATH, file), "utf8");
+    const content = fs.readFileSync(
+      path.join(process.env.DATA_PATH, file),
+      "utf8"
+    );
     const attempts = JSON.parse(content);
     if (Array.isArray(attempts)) {
       no_attempts += attempts.length;
@@ -37,7 +39,8 @@ exports.index = (req, res) => {
         results.push({
           id: attempt.attempt.id,
           attempt_length: attempt.attempt.data.length,
-          attempt_complete: (attempt.attempt.data.length / dataset.length) * 100,
+          attempt_complete:
+            (attempt.attempt.data.length / dataset.length) * 100,
           generated_code: no_gen_code,
           generated_complete: (no_gen_code / dataset.length) * 100,
           analyzed_code: no_anl_code,

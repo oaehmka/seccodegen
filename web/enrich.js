@@ -2,8 +2,7 @@
 
 const log4js = require("log4js");
 const logger = log4js.getLogger("controller");
-
-const dataset = require("../datasets/llmseceval.json");
+const fs = require("node:fs");
 
 exports.enrich = (req, res) => {
   // #swagger.tags = ['enrich']
@@ -15,6 +14,8 @@ exports.enrich = (req, res) => {
 };
 
 exports.enrichDataset = (prefix, suffix) => {
+  const dataset = JSON.parse(fs.readFileSync(process.env.DATASET, "utf8"));
+
   const p = prefix ? prefix + " " : "";
   const s = suffix ? " " + suffix : "";
 
