@@ -61,29 +61,40 @@ exports.generateMissingCode = (req, res) => {
 
   const ls = fs.readdirSync(process.env.DATA_PATH);
 
+  const all_promises = [];
+
   ls.forEach(async (file) => {
     const content = fs.readFileSync(path.join(process.env.DATA_PATH, file), "utf8");
     const attempts = JSON.parse(content);
 
     if (Array.isArray(attempts)) {
+      const promises_per_file = [];
+
       for (const attempt of attempts) {
         for (const data of attempt.attempt.data) {
           if (data.generated_code === "") {
             logger.info("generating code");
-            await generate
+            const promise = generate
               .generateCode(data.modified_prompt)
               .then((el) => {
                 data.generated_code = el;
               });
+            all_promises.push(promise);
+            promises_per_file.push(promise);
           }
         }
       }
 
-      fs.writeFileSync(path.join(process.env.DATA_PATH, file), JSON.stringify(attempts, null, 2));
+      Promise.all(promises_per_file)
+      .then(() => fs.writeFileSync(path.join(process.env.DATA_PATH, file), JSON.stringify(attempts, null, 2)));
+
     }
   });
 
-  res.status(201).send();
+  Promise.all(all_promises).then(() =>
+    res.status(201).send()
+  );
+
 };
 
 exports.analyzeMissingCode = (req, res) => {
