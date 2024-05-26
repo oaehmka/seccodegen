@@ -68,6 +68,7 @@ exports.generateMissingCode = (req, res) => {
 
   const all_promises = [];
 
+  logger.info("starting with code generation");
   ls.forEach(async (file) => {
     const content = fs.readFileSync(
       path.join(process.env.DATA_PATH, file),
@@ -81,7 +82,6 @@ exports.generateMissingCode = (req, res) => {
       for (const attempt of attempts) {
         for (const data of attempt.attempt.data) {
           if (data.generated_code === "") {
-            logger.info("generating code");
             const promise = generate
               .generateCode(data.modified_prompt)
               .then((el) => {
@@ -102,7 +102,10 @@ exports.generateMissingCode = (req, res) => {
     }
   });
 
-  Promise.all(all_promises).then(() => res.status(201).send());
+  Promise.all(all_promises).then(() => {
+    res.status(201).send();
+    logger.info("finished with code generation");
+  });
 };
 
 exports.analyzeMissingCode = (req, res) => {
