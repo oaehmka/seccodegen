@@ -44,15 +44,20 @@ exports.addAttempt = (req, res) => {
   fs.mkdirSync(process.env.DATA_PATH, { recursive: true });
 
   const no_overwrite = { flag: "wx" };
-  fs.writeFile(dataPath, JSON.stringify([attempt], null, 2), no_overwrite, (error) => {
-    if (error) {
-      logger.error("writing file failed: " + error);
-      res.status(501).json({ error: "writing failed", message: error });
-    } else {
-      logger.info("write to file: " + req.body.id + ".json");
-      res.status(201).send();
+  fs.writeFile(
+    dataPath,
+    JSON.stringify([attempt], null, 2),
+    no_overwrite,
+    (error) => {
+      if (error) {
+        logger.error("writing file failed: " + error);
+        res.status(501).json({ error: "writing failed", message: error });
+      } else {
+        logger.info("write to file: " + req.body.id + ".json");
+        res.status(201).send();
+      }
     }
-  });
+  );
 };
 
 exports.generateMissingCode = (req, res) => {
@@ -64,7 +69,10 @@ exports.generateMissingCode = (req, res) => {
   const all_promises = [];
 
   ls.forEach(async (file) => {
-    const content = fs.readFileSync(path.join(process.env.DATA_PATH, file), "utf8");
+    const content = fs.readFileSync(
+      path.join(process.env.DATA_PATH, file),
+      "utf8"
+    );
     const attempts = JSON.parse(content);
 
     if (Array.isArray(attempts)) {
@@ -85,16 +93,16 @@ exports.generateMissingCode = (req, res) => {
         }
       }
 
-      Promise.all(promises_per_file)
-      .then(() => fs.writeFileSync(path.join(process.env.DATA_PATH, file), JSON.stringify(attempts, null, 2)));
-
+      Promise.all(promises_per_file).then(() =>
+        fs.writeFileSync(
+          path.join(process.env.DATA_PATH, file),
+          JSON.stringify(attempts, null, 2)
+        )
+      );
     }
   });
 
-  Promise.all(all_promises).then(() =>
-    res.status(201).send()
-  );
-
+  Promise.all(all_promises).then(() => res.status(201).send());
 };
 
 exports.analyzeMissingCode = (req, res) => {
@@ -104,7 +112,10 @@ exports.analyzeMissingCode = (req, res) => {
   const ls = fs.readdirSync(process.env.DATA_PATH);
 
   ls.forEach(async (file) => {
-    const content = fs.readFileSync(path.join(process.env.DATA_PATH, file), "utf8");
+    const content = fs.readFileSync(
+      path.join(process.env.DATA_PATH, file),
+      "utf8"
+    );
     const attempts = JSON.parse(content);
 
     let number_of_secure_results = 0;
@@ -133,7 +144,10 @@ exports.analyzeMissingCode = (req, res) => {
             (number_of_secure_results / attempt.attempt.data.length) * 100;
         }
       }
-      fs.writeFileSync(path.join(process.env.DATA_PATH, file), JSON.stringify(attempts, null, 2));
+      fs.writeFileSync(
+        path.join(process.env.DATA_PATH, file),
+        JSON.stringify(attempts, null, 2)
+      );
     }
   });
   res.status(201).send();

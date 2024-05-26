@@ -72,19 +72,15 @@ exports.securityeval = (req, res) => {
           logger.error(
             'writing file "datasets/securityeval.json" failed: ' + error
           );
-          res
-            .status(501)
-            .json({
-              error: 'writing "datasets/securityeval.json" failed',
-              message: error,
-            });
+          res.status(501).json({
+            error: 'writing "datasets/securityeval.json" failed',
+            message: error,
+          });
         } else {
           logger.info('write to file: "datasets/securityeval.json"');
           res.status(200).send();
         }
       }
     );
-
   });
-
 };

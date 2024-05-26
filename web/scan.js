@@ -25,6 +25,6 @@ exports.scanCode = (body) => {
 
   return {
     report: "the code may or may not be vulnerable",
-    vulnerable: true
+    vulnerable: true,
   };
 };

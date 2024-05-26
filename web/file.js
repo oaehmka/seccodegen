@@ -12,7 +12,7 @@ exports.write = (req, res) => {
   const baseDir = process.env.DATA_PATH;
   const sanitizedPath = path.join(baseDir, path.join("/", req.body.filename));
 
-  fs.mkdirSync(baseDir, {recursive: true});
+  fs.mkdirSync(baseDir, { recursive: true });
 
   fs.writeFile(sanitizedPath, req.body.content, (error) => {
     if (error) {
