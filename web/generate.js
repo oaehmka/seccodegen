@@ -24,7 +24,11 @@ exports.generateCode = async (prompt) => {
       "Content-type": "application/json; charset UTF-8;",
       Authorization: "Bearer " + process.env.OPENAI_API_KEY,
     },
-  }).then((r) => r.json());
+    timeout: 20000,
+  }).then((r) => r.json())
+      .catch(error => {
+          console.error('Error while calling openai api:', error);
+      });
 
   if (Object.hasOwn(response, "error")) {
     logger.error("Generating Code failed: " + response.error.message);
