@@ -7,6 +7,7 @@ const enrich = require("./enrich");
 const generate = require("./generate");
 const evaluate = require("./evaluate");
 const file = require("./file");
+const clear = require("./clear");
 const scan = require("./scan");
 const converter = require("./converter");
 
@@ -20,6 +21,8 @@ router.post("/scan", scan.scan);
 router.post("/addAttempt", evaluate.addAttempt);
 router.get("/generateMissingCode", evaluate.generateMissingCode);
 router.get("/extractMissingCode", evaluate.extractMissingCode);
+router.get("/clearGeneratedCode", clear.clearGeneratedCode);
+router.get("/clearExtractedCode", clear.clearExtractedCode);
 router.get("/analyzeMissingCode", evaluate.analyzeMissingCode);
 router.get("/LLMSecEvalConverter", converter.llmseceval);
 router.get("/SecurityEvalConverter", converter.securityeval);
