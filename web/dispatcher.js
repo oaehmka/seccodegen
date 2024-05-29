@@ -19,6 +19,7 @@ router.post("/appendFile", file.append);
 router.post("/scan", scan.scan);
 router.post("/addAttempt", evaluate.addAttempt);
 router.get("/generateMissingCode", evaluate.generateMissingCode);
+router.get("/extractMissingCode", evaluate.extractMissingCode);
 router.get("/analyzeMissingCode", evaluate.analyzeMissingCode);
 router.get("/LLMSecEvalConverter", converter.llmseceval);
 router.get("/SecurityEvalConverter", converter.securityeval);

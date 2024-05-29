@@ -31,6 +31,7 @@ exports.addAttempt = (req, res) => {
 
   for (const e of prompts) {
     attempt.attempt.data.push({
+      id: e.id,
       original_prompt: e.prompt,
       modified_prompt: e.modified_prompt,
       suspected_vulnerability: e.suspected_vulnerability,
@@ -81,7 +82,7 @@ exports.generateMissingCode = (req, res) => {
 
       for (const attempt of attempts) {
         for (const data of attempt.attempt.data) {
-          if (data.generated_code === "") {
+          if (!data.generated_code) {
             const promise = generate
               .generateCode(data.modified_prompt)
               .then((el) => {
@@ -105,6 +106,54 @@ exports.generateMissingCode = (req, res) => {
   Promise.all(all_promises).then(() => {
     res.status(201).send();
     logger.info("finished with code generation");
+  });
+}
+
+  exports.extractMissingCode = (req, res) => {
+    // #swagger.tags = ['evaluate']
+    logger.debug("extractMissingCode called");
+
+    const ls = fs.readdirSync(process.env.DATA_PATH);
+
+    const all_promises = [];
+
+    logger.info("starting with code extraction");
+    ls.forEach(async (file) => {
+      const content = fs.readFileSync(
+          path.join(process.env.DATA_PATH, file),
+          "utf8"
+      );
+      const attempts = JSON.parse(content);
+
+      if (Array.isArray(attempts)) {
+        const promises_per_file = [];
+
+        for (const attempt of attempts) {
+          for (const data of attempt.attempt.data) {
+            if (data.generated_code && !data.extracted_code) {
+              const promise = generate
+                  .extractCode(data.generated_code, data.language)
+                  .then((el) => {
+                    data.extracted_code = el;
+                  });
+              all_promises.push(promise);
+              promises_per_file.push(promise);
+            }
+          }
+        }
+
+        Promise.all(promises_per_file).then(() =>
+            fs.writeFileSync(
+                path.join(process.env.DATA_PATH, file),
+                JSON.stringify(attempts, null, 2)
+            )
+        );
+      }
+    });
+
+  Promise.all(all_promises).then(() => {
+    res.status(201).send();
+    logger.info("finished with code extraction");
   });
 };
 
