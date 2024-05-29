@@ -17,9 +17,10 @@ exports.llmseceval = (req, res) => {
   const data = JSON.parse(content);
 
   const result = data.map((element) => ({
-    prompt: element["NL Prompt"],
+    id: "LLMSecEval-" + element["Promot ID"],
+    prompt: element["NL Prompt"].replace("<language>", element["Language"]),
     suspected_vulnerability: element["Promot ID"].match(/^[a-zA-Z\-0-9]*/)[0],
-    language: element.Language,
+    language: element.Language.replace("Python", "python"),
   }));
 
   fs.writeFile(
@@ -59,6 +60,7 @@ exports.securityeval = (req, res) => {
 
   rl.on("close", () => {
     const result = dataset.map((element) => ({
+      id: 'SecurityEval-' + element.ID,
       prompt: element.Prompt,
       suspected_vulnerability: element.ID.match(/^[a-zA-Z\-0-9]*/)[0],
       language: "python",

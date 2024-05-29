@@ -123,7 +123,10 @@ and appends the `content` to `filename`.
 
 ```json
 {
-  "???": "???"
+  "id": "any",
+  "language": "any",
+  "code": "any",
+  "sus_cwe": "any"
 }
 ```
 
