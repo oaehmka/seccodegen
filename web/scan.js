@@ -13,12 +13,63 @@ exports.scan = (req, res) => {
     // #swagger.tags = ['scan']
     logger.debug("generate called:", req.body.id, req.body.language, req.body.suspected_vulnerability, req.body.generated_code);
 
-    const response = this.scanCode(req.body);
+    const response = this.scanSemgrep(req.body);
 
     res.status(200).json(response);
 };
 
-exports.scanCode = (body) => {
+exports.scanSemgrep = (body) => {
+    const inputElements = ["extracted_code", "id", "suspected_vulnerability", "language"];
+
+    if (!inputElements.every((element) => Object.hasOwn(body, element))) {
+        logger.error("Input is missing element:", element);
+        logger.debug("Object: " + body);
+        return {error: "Input is missing elements."};
+    }
+
+    // create temporary directory
+    const directoryName = Math.random().toString(36).substring(7);
+    const directoryPath = path.join('tmp', 'scan', directoryName);
+
+    // write code to file
+    let extension = body.language.replace("python", "py");
+    const fileName = body.id + "." + extension;
+    const filePath = path.join(directoryPath, fileName);
+
+    fs.mkdirSync(directoryPath, {recursive: true});
+    fs.writeFileSync(filePath, body['extracted_code'], (error) => {
+        if (error) {
+            logger.error("writing file failed: " + error);
+            res.status(501).json({error: "writing failed", message: error});
+        } else {
+            logger.info("write to file: " + req.body.filename);
+        }
+    });
+
+    // executing semgrep
+    const databaseCreateCommand = `semgrep scan --json --error`;
+    try {
+        console.log("executing semgrep scan")
+        const output = execSync(databaseCreateCommand, {stdio: 'inherit'});
+        console.log(output);
+    } catch (error) {
+        console.error("Error executing command:", error.message);
+        console.error("stderr:", error.stderr ? error.stderr.toString() : "No stderr");
+    }
+
+    // deleting temporary folder
+    fs.rmSync(directoryPath, { recursive: true, force: true });
+
+
+    // TODO use semgrep output for "remport" and return value for "vulnerable"
+
+    return {
+        report: "some",
+        vulnerable: true
+    }
+}
+
+exports.scanCodeQL = (body) => {
     const inputElements = ["extracted_code", "id", "suspected_vulnerability", "language"];
 
     if (!inputElements.every((element) => Object.hasOwn(body, element))) {

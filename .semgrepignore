@@ -1,0 +1,14 @@
+.env.defaults
+.gitignore
+.semgrepignore
+README.md
+app.js
+dataset.json
+log4js.json
+nodemon.json
+package-lock.json
+package.json
+swagger.js
+datasets/*
+data/*
+web/*
