@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "start": "npm run swagger && node app.js",
-    "dev": "npm run swagger && nodemon app.js --ignore tmp/",
+    "dev": "npm run swagger && nodemon app.js",
     "debug": "nodemon --inspect app.js",
     "swagger": "node swagger.js"
   },

@@ -1,6 +1,7 @@
 {
   "ignore": [
     "data/**",
-    "datasets/**"
+    "datasets/**",
+    "tmp/**"
   ]
 }
