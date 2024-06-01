@@ -47,7 +47,9 @@ exports.scanSemgrep = (body) => {
     });
 
     // executing semgrep
-    const databaseCreateCommand = `semgrep scan --json --error`;
+    // TODO this command scans entire repo except specific folders
+    // fix this by only scaning the "directoryPath" dir
+    const databaseCreateCommand = `semgrep scan --json -q --error`;
     try {
         console.log("executing semgrep scan")
         const output = execSync(databaseCreateCommand, {stdio: 'inherit'});
