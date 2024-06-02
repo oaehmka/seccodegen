@@ -4,10 +4,7 @@ const log4js = require("log4js");
 const fs = require("node:fs");
 const logger = log4js.getLogger("controller");
 const path = require("path");
-const file = require("./file");
-const command = require("nodemon/lib/config/command");
 const {execSync} = require("child_process");
-
 
 exports.scan = (req, res) => {
     // #swagger.tags = ['scan']
@@ -49,19 +46,18 @@ exports.scanSemgrep = (body) => {
     // executing semgrep
     // TODO this command scans entire repo except specific folders
     // fix this by only scaning the "directoryPath" dir
-    const databaseCreateCommand = `semgrep scan --json -q --error`;
+    const databaseCreateCommand = `semgrep scan --json -q`;
     try {
-        console.log("executing semgrep scan")
-        const output = execSync(databaseCreateCommand, {stdio: 'inherit'});
-        console.log(output);
+        logger.debug("executing semgrep scan")
+        const output = execSync(databaseCreateCommand);
+        logger.debug(JSON.parse(output.toString()));
     } catch (error) {
-        console.error("Error executing command:", error.message);
-        console.error("stderr:", error.stderr ? error.stderr.toString() : "No stderr");
+        logger.error("Error executing command:", error.message);
+        logger.error("stderr:", error.stderr ? error.stderr.toString() : "No stderr");
     }
 
     // deleting temporary folder
     fs.rmSync(directoryPath, { recursive: true, force: true });
-
 
     // TODO use semgrep output for "remport" and return value for "vulnerable"
 
