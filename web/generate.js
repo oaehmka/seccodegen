@@ -27,7 +27,7 @@ exports.generateCode = async (prompt) => {
     timeout: 20000,
   }).then((r) => r.json())
       .catch(error => {
-          console.error('Error while calling openai api:', error);
+          logger.error('Error while calling openai api:', error);
       });
 
   if (Object.hasOwn(response, "error")) {
@@ -62,7 +62,7 @@ exports.extractCode = async (generatedAnswer, language) => {
     timeout: 20000,
   }).then((r) => r.json())
       .catch(error => {
-        console.error('Error while calling openai api:', error);
+        logger.error('Error while calling openai api:', error);
       });
 
   if (Object.hasOwn(response, "error")) {
