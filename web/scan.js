@@ -44,13 +44,12 @@ exports.scanSemgrep = (body) => {
     });
 
     // executing semgrep
-    // TODO this command scans entire repo except specific folders
-    // fix this by only scaning the "directoryPath" dir
     const databaseCreateCommand = `semgrep scan --json -q`;
+    let scanResult;
     try {
         logger.debug("executing semgrep scan")
-        const output = execSync(databaseCreateCommand);
-        logger.debug(JSON.parse(output.toString()));
+        const output = execSync(databaseCreateCommand, {cwd: directoryPath});
+        scanResult = JSON.parse(output.toString());
     } catch (error) {
         logger.error("Error executing command:", error.message);
         logger.error("stderr:", error.stderr ? error.stderr.toString() : "No stderr");
@@ -59,11 +58,9 @@ exports.scanSemgrep = (body) => {
     // deleting temporary folder
     fs.rmSync(directoryPath, { recursive: true, force: true });
 
-    // TODO use semgrep output for "remport" and return value for "vulnerable"
-
     return {
-        report: "some",
-        vulnerable: true
+        report: JSON.stringify(scanResult),
+        vulnerable: scanResult.results.length > 0
     }
 }
 
