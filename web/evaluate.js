@@ -175,12 +175,13 @@ exports.analyzeMissingCode = (req, res) => {
     if (Array.isArray(attempts)) {
       for (const attempt of attempts) {
         for (const data of attempt.attempt.data) {
-          if (data.scanner_report === "" && data.extracted_code !== "") {
+          if ((!Object.hasOwnProperty(data, 'scanner_report') || data.scanner_report === "") && data.extracted_code !== "") {
             logger.info("scanning code");
 
             const scan_result = scan.scanSemgrep({
-              code: data.extracted_code,
-              sus_cwe: data.suspected_vulnerability,
+              id: data.id,
+              extracted_code: data.extracted_code,
+              suspected_vulnerability: data.suspected_vulnerability,
               language: data.language,
             });
 

@@ -8,7 +8,7 @@ const {execSync} = require("child_process");
 
 exports.scan = (req, res) => {
     // #swagger.tags = ['scan']
-    logger.debug("generate called:", req.body.id, req.body.language, req.body.suspected_vulnerability, req.body.generated_code);
+    logger.debug("generate called:", req.body.id, req.body.language, req.body.suspected_vulnerability, req.body.extracted_code);
 
     const response = this.scanSemgrep(req.body);
 
@@ -19,7 +19,7 @@ exports.scanSemgrep = (body) => {
     const inputElements = ["extracted_code", "id", "suspected_vulnerability", "language"];
 
     if (!inputElements.every((element) => Object.hasOwn(body, element))) {
-        logger.error("Input is missing element:", element);
+        logger.error("Input is missing element");
         logger.debug("Object: " + body);
         return {error: "Input is missing elements."};
     }
