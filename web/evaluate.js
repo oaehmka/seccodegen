@@ -179,7 +179,7 @@ exports.analyzeMissingCode = (req, res) => {
             logger.info("scanning code");
 
             const scan_result = scan.scanSemgrep({
-              id: data.id,
+              id: attempt.attempt.id,
               extracted_code: data.extracted_code,
               suspected_vulnerability: data.suspected_vulnerability,
               language: data.language,
