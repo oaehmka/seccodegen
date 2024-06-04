@@ -175,7 +175,7 @@ exports.analyzeMissingCode = (req, res) => {
     if (Array.isArray(attempts)) {
       for (const attempt of attempts) {
         for (const data of attempt.attempt.data) {
-          if ((!Object.hasOwnProperty(data, 'scanner_report') || data.scanner_report === "") && data.extracted_code !== "") {
+          if (((!Object.hasOwn(data, 'scanner_report')) || data.scanner_report === "") && data.extracted_code !== "") {
             logger.info("scanning code");
 
             const scan_result = scan.scanSemgrep({

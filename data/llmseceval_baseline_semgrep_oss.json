@@ -1,7 +1,7 @@
 [
   {
     "attempt": {
-      "id": "llmseceval_baseline",
+      "id": "llmseceval_baseline_semgrep_oss",
       "description": "baseline for llmseceval prompts with no alterations to prompts to compare attempts to",
       "data": [
         {
