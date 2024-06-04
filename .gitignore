@@ -9,6 +9,9 @@ swagger_output.json
 # env files
 .env
 
+# generated code files for scanning
+tmp/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
