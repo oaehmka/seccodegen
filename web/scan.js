@@ -44,7 +44,7 @@ exports.scanSemgrep = (body) => {
     });
 
     // executing semgrep
-    const databaseCreateCommand = `semgrep scan --json -q`;
+    const databaseCreateCommand = `semgrep scan --json -q --no-git-ignore`;
     let scanResult;
     try {
         logger.debug("executing semgrep scan")
