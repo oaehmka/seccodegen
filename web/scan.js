@@ -5,6 +5,8 @@ const fs = require("node:fs");
 const logger = log4js.getLogger("controller");
 const path = require("path");
 const {execSync} = require("child_process");
+const util = require('node:util');
+const exec = util.promisify(require('node:child_process').exec);
 
 exports.scan = (req, res) => {
     // #swagger.tags = ['scan']
@@ -15,7 +17,7 @@ exports.scan = (req, res) => {
     res.status(200).json(response);
 };
 
-exports.scanSemgrep = (body) => {
+exports.scanSemgrep = async (body) => {
     const inputElements = ["extracted_code", "id", "suspected_vulnerability", "language"];
 
     if (!inputElements.every((element) => Object.hasOwn(body, element))) {
@@ -48,8 +50,8 @@ exports.scanSemgrep = (body) => {
     let scanResult;
     try {
         logger.debug("executing semgrep scan")
-        const output = execSync(databaseCreateCommand, {cwd: directoryPath});
-        scanResult = JSON.parse(output.toString());
+        const { stdout, stderr } = await exec(databaseCreateCommand, {cwd: directoryPath});
+        scanResult = JSON.parse(stdout.toString());
     } catch (error) {
         logger.error("Error executing command:", error.message);
         logger.error("stderr:", error.stderr ? error.stderr.toString() : "No stderr");

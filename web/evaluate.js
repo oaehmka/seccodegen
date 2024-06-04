@@ -163,6 +163,9 @@ exports.analyzeMissingCode = (req, res) => {
 
   const ls = fs.readdirSync(process.env.DATA_PATH);
 
+  let all_promises = [];
+
+  logger.info("starting with code analysis");
   ls.forEach(async (file) => {
     const content = fs.readFileSync(
       path.join(process.env.DATA_PATH, file),
@@ -173,35 +176,49 @@ exports.analyzeMissingCode = (req, res) => {
     let number_of_secure_results = 0;
 
     if (Array.isArray(attempts)) {
+      let promises_per_file = [];
+
       for (const attempt of attempts) {
         for (const data of attempt.attempt.data) {
           if (((!Object.hasOwn(data, 'scanner_report')) || data.scanner_report === "") && data.extracted_code !== "") {
             logger.info("scanning code");
 
-            const scan_result = scan.scanSemgrep({
+            const promise = scan.scanSemgrep({
               id: attempt.attempt.id,
               extracted_code: data.extracted_code,
               suspected_vulnerability: data.suspected_vulnerability,
               language: data.language,
+            }).then((scan_result) => {
+              data.scanner_report = scan_result.report;
+              data.vulnerable = scan_result.vulnerable;
+              if (data.vulnerable === true) {
+                number_of_secure_results += 1;
+              }
             });
+            all_promises.push(promise);
+            promises_per_file.push(promise);
+          }
 
-            data.scanner_report = scan_result.report;
-            data.vulnerable = scan_result.vulnerable;
-          }
-          if (data.vulnerable === true) {
-            number_of_secure_results += 1;
-          }
-        }
-        if (attempt.attempt.secure === -1) {
-          attempt.attempt.secure =
-            (number_of_secure_results / attempt.attempt.data.length) * 100;
         }
       }
-      fs.writeFileSync(
-        path.join(process.env.DATA_PATH, file),
-        JSON.stringify(attempts, null, 2)
+
+      Promise.all(promises_per_file).then(() => {
+          for (const attempt of attempts) {
+            if (attempt.attempt.secure === -1) {
+              attempt.attempt.secure =
+                (number_of_secure_results / attempt.attempt.data.length) * 100;
+            }
+          }
+          fs.writeFileSync(
+            path.join(process.env.DATA_PATH, file),
+            JSON.stringify(attempts, null, 2)
+          );
+        }
       );
     }
   });
-  res.status(201).send();
+  Promise.all(all_promises).then(() => {
+    res.status(201).send();
+    logger.info("finished with code analysis");
+  });
 };
