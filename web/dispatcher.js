@@ -26,5 +26,6 @@ router.get("/clearExtractedCode", clear.clearExtractedCode);
 router.get("/analyzeMissingCode", evaluate.analyzeMissingCode);
 router.get("/LLMSecEvalConverter", converter.llmseceval);
 router.get("/SecurityEvalConverter", converter.securityeval);
+router.get("/PurpleLlamaConverter", converter.purplellama);
 
 module.exports = router;
