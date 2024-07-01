@@ -21,6 +21,7 @@ exports.llmseceval = (req, res) => {
     prompt: element["NL Prompt"].replace("<language>", element["Language"]),
     suspected_vulnerability: element["Promot ID"].match(/^[a-zA-Z\-0-9]*/)[0],
     language: element.Language.replace("Python", "python"),
+    source: "LLMSevEval"
   }));
 
   fs.writeFile(
@@ -64,6 +65,7 @@ exports.securityeval = (req, res) => {
       prompt: element.Prompt,
       suspected_vulnerability: element.ID.match(/^[a-zA-Z\-0-9]*/)[0],
       language: "python",
+      source: "SecurityEval"
     }));
 
     fs.writeFile(
@@ -85,4 +87,70 @@ exports.securityeval = (req, res) => {
       }
     );
   });
+};
+
+exports.purplellama = (req, res) => {
+  // #swagger.tags = ['converter']
+  logger.debug("autocomplete called");
+
+  const autocomplete_content = fs.readFileSync(
+    "datasets/src/autocomplete.json",
+    "utf8"
+  );
+
+  const autocomplete_data = JSON.parse(autocomplete_content);
+
+  const instruct_content = fs.readFileSync(
+    "datasets/src/instruct.json",
+    "utf8"
+  );
+
+  const instruct_data = JSON.parse(instruct_content);
+
+  let i = 0;
+  let result = [];
+  
+  for (const element of instruct_data) {
+    result.push(
+      {
+        id: "PurpleLlama-" + i.toString().padStart(4, "0"),
+        prompt: element["test_case_prompt"],
+        suspected_vulnerability: element["cwe_identifier"],
+        language: element.language,
+        source: "PurpleLlama/instruct.json"
+      }
+    )
+    i++;
+  }
+  for (const element of autocomplete_data) {
+    result.push(
+      {
+        id: "PurpleLlama-" + i.toString().padStart(4, "0"),
+        prompt: element["test_case_prompt"],
+        suspected_vulnerability: element["cwe_identifier"],
+        language: element.language,
+        source: "PurpleLlama/autocomplete.json"
+      }
+    )
+    i++;
+  }
+  
+  fs.writeFile(
+    "datasets/purplellama.json",
+    JSON.stringify(result, null, 2),
+    (error) => {
+      if (error) {
+        logger.error(
+          'writing file "datasets/purplellama.json" failed: ' + error
+        );
+        res.status(501).json({
+          error: 'writing "datasets/purplellama.json" failed',
+          message: error,
+        });
+      } else {
+        logger.info('write to file: "datasets/purplellama.json"');
+        res.status(200).send();
+      }
+    }
+  );
 };
